@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.scdx.dao.LIFMapper" >
+  <resultMap id="BaseResultMap" type="edu.scdx.entity.LowIncomFamilies" >
+    <id column="name" property="name" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="identification" property="identification" jdbcType="VARCHAR" />
+    <result column="domicile" property="domicile" jdbcType="VARCHAR" />
+    <result column="tel" property="telNo" jdbcType="VARCHAR" />
+    <result column="housing" property="housing" jdbcType="VARCHAR" />
+    <result column="education" property="education" jdbcType="VARCHAR" />
+    <result column="marriage" property="marriage" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap2" type="edu.scdx.entity.LowIncomFamilies" >
+    <id column="lif_id" property="lif_id" jdbcType="INTEGER" />
+    <result column="telNo" property="telNo" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="VARCHAR" />
+    <result column="nationality" property="nationality" jdbcType="VARCHAR" />
+    <result column="domicile" property="domicile" jdbcType="VARCHAR" />
+    <result column="identification" property="identification" jdbcType="VARCHAR" />
+    <result column="dis_id" property="dis_id" jdbcType="VARCHAR" />
+    <result column="disability" property="disability" jdbcType="VARCHAR" />
+    <result column="marriage" property="marriage" jdbcType="VARCHAR" />
+    <result column="family_num" property="family_num" jdbcType="INTEGER" />
+    <result column="no_insurance_num" property="no_insurance_num" jdbcType="INTEGER" />
+    <result column="housing" property="housing" jdbcType="VARCHAR" />
+    <result column="house_income" property="house_income" jdbcType="INTEGER" />
+    <result column="policy_income" property="policy_income" jdbcType="INTEGER" />
+    <result column="education" property="education" jdbcType="VARCHAR" />
+    <result column="others" property="others" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="getAll" resultMap="BaseResultMap">
+    SELECT * FROM applicant
+  </select>
+
+  <select id="getAll_lif" resultMap="BaseResultMap2">
+    SELECT * FROM lif_basic_info
+  </select>
+
+  <resultMap id="BaseResultMap3" type="edu.scdx.entity.Authority" >
+    <id column="p.project_id" property="project_id" jdbcType="VARCHAR" />
+    <result column="p.lif_id" property="lif_id" jdbcType="INTEGER" />
+    <result column="project_name" property="project_name" jdbcType="VARCHAR" />
+    <result column="poverty_measure" property="poverty_measure" jdbcType="VARCHAR" />
+    <result column="schedule" property="schedule" jdbcType="VARCHAR" />
+    <result column="demand_name" property="demand_name" jdbcType="VARCHAR" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="poverty_will" property="poverty_will" jdbcType="VARCHAR" />
+    <result column="plan_fund" property="plan_fund" jdbcType="FLOAT" />
+    <result column="invested_money" property="invested_money" jdbcType="FLOAT" />
+    <result column="out_of_poverty" property="out_of_poverty" jdbcType="VARCHAR" />
+    <result column="method_valid" property="method_valid" jdbcType="VARCHAR" />
+    <result column="helping_people" property="helping_people" jdbcType="VARCHAR" />
+    <result column="helping_department" property="helping_department" jdbcType="VARCHAR" />
+    <result column="helping_people_job" property="helping_people_job" jdbcType="VARCHAR" />
+    <result column="helping_tel" property="helping_tel" jdbcType="VARCHAR" />
+    <result column="supervisor" property="supervisor" jdbcType="VARCHAR" />
+    <result column="inspection_time" property="inspection_time" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getAllProject" resultMap="BaseResultMap3">
+    SELECT * FROM project p,support_situation s WHERE p.project_id=s.project_id AND p.lif_id=s.lif_id;
+  </select>
+  <select id="getProjectDataByID" parameterType="String" resultMap="BaseResultMap3">
+    SELECT * FROM project p,support_situation s WHERE p.project_id=s.project_id AND p.lif_id=s.lif_id AND p.project_id=#{project};
+  </select>
+  <delete id="deleteProjectByID" parameterType="String">
+    DELETE FROM project WHERE project_id=#{project_id}
+  </delete>
+  <update id="updateProjectData" parameterType="edu.scdx.entity.Authority">
+   UPDATE project SET project_name=#{project_name} WHERE project_id=#{project_id} AND lif_id=#{lif_id};
+  </update>
+  <update id="updateSupData" parameterType="edu.scdx.entity.Authority">
+    UPDATE support_situation SET helping_people=#{helping_people},helping_department=#{helping_department},helping_people_job=#{helping_people_job},helping_tel=#{helping_tel},supervisor=#{supervisor},inspection_time=#{inspection_time},out_of_poverty=#{out_of_poverty} WHERE project_id=#{project_id} AND lif_id=#{lif_id};
+  </update>
+  <insert id="insertProjectData" parameterType="edu.scdx.entity.Authority">
+    INSERT INTO project(project_id,lif_id,project_name,schedule,demand_name) VALUES(#{project_id},#{lif_id},#{project_name},#{schedule},#{demand_name})
+  </insert>
+  <insert id="insertSupData" parameterType="edu.scdx.entity.Authority">
+    INSERT  INTO support_situation(lif_id,reason,poverty_will,plan_fund,invested_money,project_id,out_of_poverty,method_valid,helping_people,helping_department,helping_people_job,helping_tel,supervisor,inspection_time) VALUES(#{lif_id},#{reason},#{poverty_will},#{plan_fund},#{invested_money},#{project_id},#{out_of_poverty},#{method_valid},#{helping_people},#{helping_department},#{helping_people_job},#{helping_tel},#{supervisor},#{inspection_time})
+  </insert>
+
+
+
+  <!--查询贫困户所有信息-->
+  <select id="selectInfo" parameterType="Integer" resultMap="BaseResultMap2">
+    SELECT * FROM lif_basic_info WHERE lif_id=#{lif_id}
+  </select>
+  <select id="getDemand" parameterType="Integer" resultMap="BaseResultMap3">
+    SELECT * FROM project WHERE lif_id=#{lif_id}
+  </select>
+
+
+  <!-- 更新基本信息表-->
+  <update id="editInfo" parameterType="edu.scdx.entity.LowIncomFamilies">
+    UPDATE lif_basic_info SET telNo=#{telNo},name=#{name},gender=#{gender},birthday=#{birthday},nationality=#{nationality},domicile=#{domicile},identification=#{identification},dis_id=#{dis_id},disability=#{disability},marriage=#{marriage},family_num=#{family_num},no_insurance_num=#{no_insurance_num},housing=#{housing},house_income=#{house_income},policy_income=#{policy_income},education=#{education},others=#{others} WHERE lif_id=#{lif_id}
+  </update>
+  <!--添加新贫困户-->
+  <insert id="insertInfo" parameterType="edu.scdx.entity.LowIncomFamilies">
+    INSERT INTO lif_basic_info(telNo,name,gender,birthday,nationality, domicile, identification, dis_id, disability,marriage, family_num,no_insurance_num,housing,house_income,policy_income,education,others)
+    VALUES(#{telNo},#{name},#{gender},#{birthday},#{nationality},#{domicile},#{identification},#{dis_id},#{disability},#{marriage},#{family_num},#{no_insurance_num},#{housing},#{house_income},#{policy_income},#{education},#{others})
+  </insert>
+
+
+  <resultMap id="BaseResultMap4" type="edu.scdx.entity.TransparentManagement" >
+    <id column="l.lif_id" property="lif_id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="poverty_will" property="poverty_will" jdbcType="VARCHAR" />
+    <result column="out_of_poverty" property="out_of_poverty" jdbcType="VARCHAR" />
+    <result column="poverty_measure" property="poverty_measure" jdbcType="VARCHAR" />
+    <result column="p.project_id" property="project_id" jdbcType="VARCHAR" />
+    <result column="method_valid" property="method_valid" jdbcType="VARCHAR" />
+    <result column="plan_fund" property="plan_fund" jdbcType="FLOAT" />
+    <result column="invested_money" property="invested_money" jdbcType="FLOAT" />
+    <result column="project_name" property="project_name" jdbcType="VARCHAR" />
+    <result column="demand_name" property="demand_name" jdbcType="VARCHAR" />
+    <result column="schedule" property="schedule" jdbcType="VARCHAR" />
+    <result column="bank_account" property="bank_account" jdbcType="VARCHAR" />
+    <result column="year" property="year" jdbcType="VARCHAR" />
+    <result column="notes" property="notes" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap5" type="edu.scdx.entity.TransparentManagement" >
+    <id column="lif_id" property="lif_id" jdbcType="INTEGER" />
+    <result column="l.name" property="name" jdbcType="VARCHAR" />
+    <result column="project_id" property="project_id" jdbcType="VARCHAR" />
+    <result column="project_name" property="project_name" jdbcType="VARCHAR" />
+    <result column="demand_name" property="demand_name" jdbcType="VARCHAR" />
+    <result column="schedule" property="schedule" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="getAllTM" parameterType="edu.scdx.entity.TransparentManagement" resultMap="BaseResultMap4">
+      /*SELECT l.lif_id,name,reason,poverty_will,out_of_poverty,poverty_measure,p.project_id,method_valid,plan_fund,invested_money,project_name,demand_name,schedule,bank_account,year,notes FROM lif_basic_info l,project p,support_situation s,account a WHERE l.lif_id=p.lif_id AND l.lif_id=s.lif_id AND p.project_id=s.project_id AND l.lif_id=a.lif_id AND p.project_id=a.project_id;*/
+    SELECT l.lif_id,name,p.project_id,project_name FROM lif_basic_info l,project p WHERE l.lif_id=p.lif_id;
+  </select>
+  <select id="getLSP" parameterType="String" resultMap="BaseResultMap4">
+    SELECT l.lif_id,name,reason,poverty_will,out_of_poverty,poverty_measure,p.project_id,method_valid,plan_fund,invested_money FROM lif_basic_info l,project p,support_situation s WHERE l.lif_id=s.lif_id AND s.project_id=#{project_id} AND s.project_id=p.project_id AND l.lif_id=p.lif_id
+  </select>
+  <select id="getPlan" parameterType="String" resultMap="BaseResultMap4">
+    SELECT p.project_id,project_name,poverty_measure,schedule,demand_name FROM project p WHERE p.project_id=#{project}
+  </select>
+  <select id="getAccount" parameterType="String" resultMap="BaseResultMap4">
+    SELECT bank_account,year,helping_fund,notes FROM account WHERE project_id=#{project_id}
+  </select>
+  <insert id="insertAccount" parameterType="edu.scdx.entity.TransparentManagement">
+    INSERT INTO account(project_id,lif_id,bank_account,year,helping_fund,notes) VALUES(#{project_id},#{lif_id},#{bank_account},#{year},#{plan_fund},#{notes});
+  </insert>
+  <update id="updateAccount" parameterType="edu.scdx.entity.TransparentManagement">
+    UPDATE account SET bank_account=#{bank_account},year=#{year},helping_fund=#{plan_fund},notes=#{notes} WHERE project_id=#{project_id}
+  </update>
+  <update id="updateLIF_name" parameterType="edu.scdx.entity.TransparentManagement">
+    UPDATE lif_basic_info SET name=#{name} WHERE lif_id=#{lif_id}
+  </update>
+  <update id="updateProject" parameterType="edu.scdx.entity.TransparentManagement">
+    UPDATE project SET project_name=#{project_name},poverty_measure=#{poverty_measure},schedule=#{schedule},demand_name=#{demand_name} WHERE project_id=#{project_id}
+  </update>
+  <update id="updateSP" parameterType="edu.scdx.entity.TransparentManagement">
+    UPDATE support_situation SET reason=#{reason},poverty_will=#{poverty_will},out_of_poverty=#{out_of_poverty},method_valid=#{method_valid},plan_fund=#{plan_fund},invested_money=#{invested_money} WHERE project_id=#{project_id}
+  </update>
+  <!--查询所有项目公示信息-->
+  <select id="getProjList" resultMap="BaseResultMap5">
+    SELECT p.*, l.name FROM project p, lif_basic_info l WHERE p.lif_id = l.lif_id
+  </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.scdx.dao.EvalMapper" >
+    <resultMap id="BaseResultMap" type="edu.scdx.entity.Evaluation" >
+        <id column="eval_id" property="eval_id" jdbcType="INTEGER" />
+        <result column="user_id" property="user_id" jdbcType="VARCHAR" />
+        <result column="degree1" property="degree1" jdbcType="VARCHAR" />
+        <result column="degree2" property="degree2" jdbcType="VARCHAR" />
+        <result column="degree3" property="degree3" jdbcType="VARCHAR" />
+        <result column="degree4" property="degree4" jdbcType="VARCHAR" />
+        <result column="marks1" property="marks1" jdbcType="VARCHAR" />
+        <result column="marks2" property="marks2" jdbcType="VARCHAR" />
+        <result column="marks3" property="marks3" jdbcType="VARCHAR" />
+        <result column="marks4" property="marks4" jdbcType="VARCHAR" />
+        <result column="ident" property="ident" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="tel_no" property="tel_no" jdbcType="VARCHAR" />
+        <result column="assort" property="assort" jdbcType="VARCHAR" />
+        <result column="other" property="other" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getAll" resultMap="BaseResultMap">
+        select eval_id,user_id,degree1 ,degree2 ,degree3,degree4 ,marks1,marks2,marks3,marks4,ident ,address,tel_no,assort,other from evaluation;
+    </select>
+
+    <select id="getEvaluationById" parameterType="String" resultMap="BaseResultMap">
+        select eval_id,user_id,degree1 ,degree2 ,degree3 ,degree4 ,marks1,marks2,marks3,marks4,ident ,address,tel_no,assort,other from evaluation where user_id= #{id};
+    </select>
+    <insert id="insertEvaluation" parameterType="edu.scdx.entity.Evaluation">
+         insert into evaluation(user_id,degree1 ,degree2 ,degree3 ,degree4 ,marks1,marks2,marks3,marks4,ident,address,tel_no,assort,other) values(#{user_id},#{degree1},#{degree2},#{degree3},#{degree4},#{marks1},#{marks2},#{marks3},#{marks4},#{ident},#{address},#{tel_no},#{assort},#{other});
+    </insert>
+</mapper>
